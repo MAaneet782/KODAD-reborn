@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@400;600;700;800&family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     html {
       scroll-behavior: smooth;
@@ -29,6 +31,48 @@
     .filter-portra { filter: contrast(1.05) saturate(1.15) brightness(1.05); }
     .filter-noir { filter: grayscale(1) contrast(1.8) brightness(0.85); }
     .filter-vintage { filter: hue-rotate(-20deg) saturate(1.6) contrast(1.2); }
+    
+    /* Custom Leaflet Map Marker Styling */
+    .custom-kodak-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .marker-pin {
+      width: 32px;
+      height: 32px;
+      border-radius: 50% 50% 50% 0;
+      background: #f5aa1c;
+      position: absolute;
+      transform: rotate(-45deg);
+      left: 50%;
+      top: 50%;
+      margin: -20px 0 0 -16px;
+      box-shadow: 0 0 15px rgba(245, 170, 28, 0.8);
+      animation: bounce 2s infinite ease-in-out;
+    }
+    .marker-pin::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      margin: 8px 0 0 8px;
+      background: #000;
+      position: absolute;
+      border-radius: 50%;
+    }
+    .leaflet-tile {
+      filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3);
+    }
+    .leaflet-popup-content-wrapper {
+      background: #181820 !important;
+      color: #fff !important;
+      border: 1px solid #f5aa1c;
+      border-radius: 12px !important;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+    }
+    .leaflet-popup-tip {
+      background: #181820 !important;
+    }
     
     /* Concert Neon Glow & Custom Scrollbar */
     ::-webkit-scrollbar {
@@ -58,6 +102,7 @@
     <!-- QUICK NAV LINKS -->
     <div class="hidden md:flex items-center gap-6 text-xs font-bold text-stone-300">
       <a href="#cameraHero" class="hover:text-[#F5AA1C] transition-colors">📹 LIVE CAMERA</a>
+      <a href="#kodakMapSection" class="hover:text-[#F5AA1C] transition-colors">🗺️ HOTSPOT MAP</a>
       <a href="#concertGallery" class="hover:text-[#F5AA1C] transition-colors">🎵 50+ CONCERT VAULT</a>
       <a href="#vipBadgeSection" class="hover:text-[#F5AA1C] transition-colors">🎫 VIP PASS BADGE</a>
       <a href="#instagramShare" class="hover:text-[#F5AA1C] transition-colors">📱 INSTAGRAM TWIN &amp; QR</a>
@@ -73,223 +118,235 @@
   </header>
 
   <!-- ================= SECTION 1: HERO & LIVE RETRO CAMERA ================= -->
-  <section id="cameraHero" class="pt-24 pb-12 px-4 min-h-[90vh] flex flex-col items-center justify-start relative overflow-hidden bg-[#0d0d11]">
+  <section id="cameraHero" class="pt-24 pb-16 px-4 md:px-10 min-h-[90vh] flex flex-col items-center justify-center relative overflow-hidden bg-[#0d0d11]">
     
-    <!-- 1. INSTAX-STYLE PHYSICAL CAMERA -->
-    <div class="w-full max-w-2xl mx-auto flex flex-col items-center relative z-20 mt-4">
+    <!-- MAIN HERO LAYOUT CONTAINER (Side-by-Side Flex: Camera on Left, Polaroids & Controls in Middle/Right) -->
+    <div class="w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center lg:items-center gap-10 lg:gap-16 relative z-20 mt-2">
       
-      <!-- Camera Body -->
-      <div id="instaxCameraBody" style="
-        width: 360px;
-        background: linear-gradient(180deg, #f5ece0 0%, #eee3d0 50%, #e8dcc8 100%);
-        border-radius: 40px;
-        padding: 24px 28px 32px;
-        box-shadow: 
-          0 20px 60px rgba(0,0,0,0.5),
-          0 0 0 3px #d4c8b4,
-          inset 0 2px 0 rgba(255,255,255,0.6),
-          inset 0 -2px 4px rgba(0,0,0,0.1);
-        position: relative;
-        user-select: none;
-      ">
+      <!-- LEFT COLUMN: INSTAX-STYLE PHYSICAL CAMERA (EXACT MATCH TO REFERENCE IMAGE) -->
+      <div class="shrink-0 relative flex flex-col items-center">
         
-        <!-- Camera Top Details -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <!-- Physical Camera Body -->
+        <div id="instaxCameraBody" style="
+          width: 350px;
+          height: 350px;
+          background: #f7f3e9;
+          border-radius: 46px;
+          padding: 20px 24px;
+          box-shadow: 
+            0 25px 50px rgba(0,0,0,0.6),
+            0 0 0 2px #e6decb,
+            inset 0 2px 4px rgba(255,255,255,0.9),
+            inset 0 -3px 6px rgba(0,0,0,0.1);
+          position: relative;
+          user-select: none;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        ">
           
-          <!-- Flash Unit -->
-          <div style="
-            width: 64px; height: 52px;
-            background: linear-gradient(145deg, #3a3a3a 0%, #222 100%);
-            border-radius: 8px;
-            border: 2px solid #555;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
-          ">
-            <div style="
-              width: 40px; height: 30px;
-              background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-              border: 1px solid #666;
-              border-radius: 4px;
-            "></div>
-          </div>
+          <!-- Metallic Side Strap Lugs (Left & Right) -->
+          <div style="position: absolute; left: -10px; top: 48%; width: 10px; height: 28px; background: linear-gradient(90deg, #b0b0b0, #ffffff, #909090); border-radius: 4px 0 0 4px; box-shadow: -2px 2px 4px rgba(0,0,0,0.3);"></div>
+          <div style="position: absolute; right: -10px; top: 48%; width: 10px; height: 28px; background: linear-gradient(90deg, #909090, #ffffff, #b0b0b0); border-radius: 0 4px 4px 0; box-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></div>
 
-          <!-- Small Counter / Viewfinder -->
-          <div style="display: flex; align-items: center; gap: 10px;">
+          <!-- TOP ROW: Flash Unit (Top Left) & Sensors/Viewfinder (Top Right) -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+            
+            <!-- Top Left: Rectangular Flash Unit with Chrome Ridges -->
             <div style="
-              width: 8px; height: 8px;
-              background: #2a2a2a;
-              border-radius: 50%;
-              border: 1.5px solid #555;
-            "></div>
-            <!-- Mini Viewfinder -->
-            <div style="
-              width: 28px; height: 22px;
-              background: linear-gradient(135deg, #1a3a5a, #0a1a2a);
-              border-radius: 6px;
-              border: 2.5px solid #bba88a;
-              box-shadow: inset 0 0 6px rgba(0,0,0,0.6);
-            "></div>
-          </div>
-        </div>
-
-        <!-- MAIN LENS AREA (Round — Live Camera Feed Goes Here) -->
-        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-          <div style="position: relative;">
-            <!-- Lens Ring (Outer — Pink/Rose Gold) -->
-            <div style="
-              width: 240px; height: 240px;
-              border-radius: 50%;
-              background: linear-gradient(145deg, #e8c8c0, #d4a8a0);
-              padding: 10px;
-              box-shadow: 0 8px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+              width: 72px; height: 50px;
+              background: linear-gradient(135deg, #efefef, #cccccc);
+              border-radius: 8px;
+              border: 2px solid #c8c0b0;
+              padding: 4px;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.2), inset 0 0 6px rgba(255,255,255,0.8);
+              display: flex; align-items: center; justify-content: center;
             ">
-              <!-- Lens Inner (Dark) -->
-              <div id="cameraViewfinderArea" style="
+              <div style="
+                width: 100%; height: 100%;
+                background: repeating-linear-gradient(90deg, #222 0px, #222 2px, #fff 2px, #fff 4px);
+                border-radius: 4px;
+                opacity: 0.85;
+                border: 1px solid #999;
+              "></div>
+            </div>
+
+            <!-- Top Right: Sensor Dots & Optical Viewfinder Lens -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <!-- Small Black Sensor Dot -->
+              <div style="width: 10px; height: 10px; background: #111; border-radius: 50%; border: 1px solid #444;"></div>
+              
+              <!-- Round Optical Viewfinder Lens -->
+              <div style="
+                width: 44px; height: 44px;
+                border-radius: 50%;
+                background: radial-gradient(circle, #050505 35%, #1a1a1a 65%, #666 90%, #ccc 100%);
+                border: 3px solid #2b2b2b;
+                box-shadow: inset 0 0 8px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.3);
+                position: relative;
+              ">
+                <!-- Lens Reflection Highlight -->
+                <div style="position: absolute; top: 6px; left: 8px; width: 8px; height: 8px; background: rgba(255,255,255,0.6); border-radius: 50%; blur: 1px;"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- MIDDLE ROW: Pink Shutter Button (Left) & Large Live Video Lens (Center-Right) -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px; margin-bottom: 4px;">
+            
+            <!-- Left Side: Circular Shutter Button with Pink Outer Ring -->
+            <div style="
+              width: 58px; height: 58px;
+              border-radius: 50%;
+              background: #e8c4bc;
+              padding: 4px;
+              box-shadow: inset 0 2px 4px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.2);
+              display: flex; align-items: center; justify-content: center;
+            ">
+              <button id="realShutterBtn" style="
                 width: 100%; height: 100%;
                 border-radius: 50%;
-                background: #1a1f2e;
-                overflow: hidden;
-                position: relative;
+                background: linear-gradient(180deg, #f0d0c8, #d8b0a8);
+                border: 1.5px solid #c8a098;
                 cursor: pointer;
-                border: 3px solid #333;
-                box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+                outline: none;
+                transition: transform 0.1s;
+                box-shadow: inset 0 1px 2px rgba(255,255,255,0.6);
+              " title="Click to Capture Photo"
+                onmousedown="this.style.transform='scale(0.92)';"
+                onmouseup="this.style.transform='scale(1)';"
+              >
+                <div style="width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #b89088; margin: 0 auto;"></div>
+              </button>
+            </div>
+
+            <!-- Center-Right: Large Round Rose-Gold Lens (Live Video Viewfinder) -->
+            <div style="position: relative;">
+              <!-- Outer Pink/Rose Gold Bezel -->
+              <div style="
+                width: 210px; height: 210px;
+                border-radius: 50%;
+                background: linear-gradient(145deg, #ebd0c8, #d8b0a8);
+                padding: 8px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
               ">
-                <!-- Permission / Offline State -->
-                <div id="cameraOfflineState" style="
-                  position: absolute; inset: 0;
-                  display: flex; flex-direction: column;
-                  align-items: center; justify-content: center;
-                  z-index: 20; background: #1a1f2e;
-                  border-radius: 50%;
-                ">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8a9ab0" stroke-width="1.5" style="margin-bottom: 8px;">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="11.73"></line>
-                  </svg>
-                  <span style="color: #8a9ab0; font-size: 11px; font-weight: 600; letter-spacing: 0.1em;">Retry Camera</span>
-                </div>
-
-                <!-- Real Device Video Feed -->
-                <video id="liveCameraFeed" autoplay playsinline muted class="hidden" style="
+                <!-- Inner Camera Viewfinder Area -->
+                <div id="cameraViewfinderArea" style="
                   width: 100%; height: 100%;
-                  object-fit: cover;
-                  transform: scaleX(-1);
-                  position: relative; z-index: 10;
                   border-radius: 50%;
-                "></video>
-                
-                <!-- Flash Effect -->
-                <div id="cameraFlashOverlay" style="
-                  position: absolute; inset: 0;
-                  background: white; z-index: 50;
-                  opacity: 0; pointer-events: none;
-                  transition: opacity 0.1s;
-                  border-radius: 50%;
-                "></div>
-
-                <!-- REC indicator -->
-                <div id="cameraRecIndicator" style="
-                  display: none;
-                  position: absolute; top: 12px; left: 12px;
-                  z-index: 30; 
-                  display: flex; align-items: center; gap: 4px;
+                  background: #111;
+                  overflow: hidden;
+                  position: relative;
+                  cursor: pointer;
+                  border: 2px solid #222;
+                  box-shadow: inset 0 0 25px rgba(0,0,0,0.9);
                 ">
-                  <div style="width: 6px; height: 6px; background: #ff3333; border-radius: 50%; animation: pulse 1.5s infinite;"></div>
-                  <span style="color: rgba(255,255,255,0.7); font-size: 8px; font-family: monospace; font-weight: bold;">REC</span>
+                  <!-- Permission / Offline State -->
+                  <div id="cameraOfflineState" style="
+                    position: absolute; inset: 0;
+                    display: flex; flex-direction: column;
+                    align-items: center; justify-content: center;
+                    z-index: 20; background: #1a1f2e;
+                    border-radius: 50%;
+                  ">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8a9ab0" stroke-width="1.5" style="margin-bottom: 6px;">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                      <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="11.73"></line>
+                    </svg>
+                    <span style="color: #8a9ab0; font-size: 10px; font-weight: 600; letter-spacing: 0.1em;">Tap Camera</span>
+                  </div>
+
+                  <!-- Real Device Video Feed -->
+                  <video id="liveCameraFeed" autoplay playsinline muted class="hidden" style="
+                    width: 100%; height: 100%;
+                    object-fit: cover;
+                    transform: scaleX(-1);
+                    position: relative; z-index: 10;
+                    border-radius: 50%;
+                  "></video>
+                  
+                  <!-- Flash Effect -->
+                  <div id="cameraFlashOverlay" style="
+                    position: absolute; inset: 0;
+                    background: white; z-index: 50;
+                    opacity: 0; pointer-events: none;
+                    transition: opacity 0.1s;
+                    border-radius: 50%;
+                  "></div>
+
+                  <!-- REC indicator -->
+                  <div id="cameraRecIndicator" style="
+                    display: none;
+                    position: absolute; top: 10px; left: 10px;
+                    z-index: 30; 
+                    display: flex; align-items: center; gap: 4px;
+                  ">
+                    <div style="width: 6px; height: 6px; background: #ff3333; border-radius: 50%; animation: pulse 1.5s infinite;"></div>
+                    <span style="color: rgba(255,255,255,0.8); font-size: 8px; font-family: monospace; font-weight: bold;">LIVE</span>
+                  </div>
                 </div>
               </div>
             </div>
+
+          </div>
+
+          <!-- BOTTOM SEPARATOR LINE -->
+          <div style="
+            width: 100%; height: 2px;
+            background: #e2dac7;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.7);
+            margin-top: 4px;
+          "></div>
+
+        </div>
+        
+        <span class="mt-3 text-stone-400 font-mono text-[11px] tracking-widest uppercase font-bold">KODAK INSTAX LIVE CAMERA</span>
+      </div>
+      
+      <!-- RIGHT COLUMN: CAPTURED POLAROID STACK, CAMERA ROLL, AND FILTERS -->
+      <div class="flex-1 w-full max-w-xl flex flex-col items-center lg:items-start gap-6">
+        
+        <!-- EJECTED POLAROID PHOTO DISPLAY -->
+        <div id="capturedPhotoContainer" class="w-full flex justify-center lg:justify-start transition-all duration-700">
+          <div class="bg-white p-3 pb-8 rounded-sm shadow-2xl rotate-[-2deg] relative w-64">
+            <div class="w-full aspect-[3/4] bg-stone-900 border border-stone-200 shadow-inner overflow-hidden">
+              <img src="party.jpg" class="w-full h-full object-cover captured-result-img filter-gold" alt="Captured Photo">
+            </div>
+            <div class="absolute bottom-2 left-0 w-full text-center font-handwriting text-stone-800 text-lg">May I meet you</div>
           </div>
         </div>
 
-        <!-- Shutter Button (Physical — Below Lens, Centered) -->
-        <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-          <!-- Small decorative button -->
-          <div style="
-            width: 32px; height: 32px;
-            background: linear-gradient(180deg, #c4a890, #a88870);
-            border-radius: 50%;
-            border: 2px solid #b89878;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
-          "></div>
-          
-          <!-- Main Shutter -->
-          <button id="realShutterBtn" style="
-            width: 56px; height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(180deg, #c4a890, #a88870);
-            border: 3px solid #b89878;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.4);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: flex; align-items: center; justify-content: center;
-            outline: none;
-          " title="Capture Photo"
-            onmousedown="this.style.transform='scale(0.92)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3), inset 0 2px 4px rgba(0,0,0,0.2)';"
-            onmouseup="this.style.transform='scale(1)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.4)';"
-          >
-            <div style="
-              width: 38px; height: 38px;
-              border-radius: 50%;
-              background: linear-gradient(180deg, #b0907a, #967060);
-              border: 1.5px solid #a08068;
-            "></div>
-          </button>
+        <!-- 3 IMAGE SCROLLER -->
+        <div class="w-full bg-stone-900/80 border border-stone-800/80 p-4 rounded-2xl backdrop-blur-sm shadow-xl">
+          <span class="text-stone-400 text-[10px] font-bold font-mono tracking-widest block mb-3 text-center lg:text-left uppercase">CAMERA ROLL (3 PHOTOS)</span>
+          <div class="flex justify-center lg:justify-start gap-3" id="imageScrollerGrid">
+            <button class="image-scroller-btn active w-20 h-20 rounded-lg overflow-hidden border-2 border-amber-400 transition-all hover:opacity-80 shrink-0" data-index="0">
+              <img src="landscape.jpg" alt="Photo 01" class="w-full h-full object-cover">
+            </button>
+            <button class="image-scroller-btn w-20 h-20 rounded-lg overflow-hidden border-2 border-transparent transition-all hover:border-stone-500 opacity-60 hover:opacity-100 shrink-0" data-index="1">
+              <img src="portrait.jpg" alt="Photo 02" class="w-full h-full object-cover">
+            </button>
+            <button class="image-scroller-btn w-20 h-20 rounded-lg overflow-hidden border-2 border-transparent transition-all hover:border-stone-500 opacity-60 hover:opacity-100 shrink-0" data-index="2">
+              <img src="party.jpg" alt="Photo 03" class="w-full h-full object-cover">
+            </button>
+          </div>
         </div>
 
-        <!-- Camera Brand Label -->
-        <div style="text-align: center; margin-top: 12px;">
-          <span style="
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 11px;
-            letter-spacing: 0.2em;
-            color: #a09080;
-          ">KODAK INSTAX · AI MOMENT</span>
+        <!-- 4 KODAK FILTERS SELECTOR -->
+        <div class="w-full bg-stone-900/80 border border-stone-800/80 p-4 rounded-2xl backdrop-blur-sm shadow-xl">
+          <span class="text-stone-400 text-[10px] font-bold font-mono tracking-widest block mb-3 text-center lg:text-left uppercase">APPLY KODAK FILM FILTER</span>
+          <div class="grid grid-cols-4 gap-2" id="filterSelectorGrid">
+            <button class="filter-apply-btn active bg-amber-400 text-black font-bold text-[10px] py-2 rounded shadow-md transition-all uppercase tracking-wider" data-filter="filter-gold">01 GOLD</button>
+            <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-portra">02 PORTRA</button>
+            <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-noir">03 NOIR</button>
+            <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-vintage">04 VINTAGE</button>
+          </div>
         </div>
 
-        <!-- Photo Ejection Slot -->
-        <div style="
-          margin-top: 12px;
-          width: 100%; height: 6px;
-          background: #222;
-          border-radius: 3px;
-          box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
-        "></div>
-      </div>
-      
-      <!-- 2. CAPTURED PHOTOGRAPH (Emerged from Camera) -->
-      <div id="capturedPhotoContainer" class="mt-8 transition-all duration-700 transform translate-y-[-20px] opacity-0 pointer-events-none w-full max-w-[300px] relative z-10">
-        <!-- The physical photo will appear here -->
-      </div>
-      
-      <!-- 3. 3 IMAGE SCROLLER -->
-      <div class="mt-12 w-full max-w-md bg-stone-900/80 border border-stone-800/80 p-4 rounded-2xl backdrop-blur-sm">
-        <span class="text-stone-400 text-[10px] font-bold font-mono tracking-widest block mb-3 text-center uppercase">CAMERA ROLL (3 PHOTOS)</span>
-        <div class="flex justify-center gap-3" id="imageScrollerGrid">
-          <button class="image-scroller-btn active w-24 h-24 rounded-lg overflow-hidden border-2 border-amber-400 transition-all hover:opacity-80" data-index="0">
-            <img src="landscape.jpg" alt="Photo 01" class="w-full h-full object-cover">
-          </button>
-          <button class="image-scroller-btn w-24 h-24 rounded-lg overflow-hidden border-2 border-transparent transition-all hover:border-stone-500 opacity-60 hover:opacity-100" data-index="1">
-            <img src="portrait.jpg" alt="Photo 02" class="w-full h-full object-cover">
-          </button>
-          <button class="image-scroller-btn w-24 h-24 rounded-lg overflow-hidden border-2 border-transparent transition-all hover:border-stone-500 opacity-60 hover:opacity-100" data-index="2">
-            <img src="party.jpg" alt="Photo 03" class="w-full h-full object-cover">
-          </button>
-        </div>
       </div>
 
-      <!-- 4. 4 FILTERS -->
-      <div class="mt-6 w-full max-w-md bg-stone-900/80 border border-stone-800/80 p-4 rounded-2xl backdrop-blur-sm mb-12">
-        <span class="text-stone-400 text-[10px] font-bold font-mono tracking-widest block mb-3 text-center uppercase">APPLY KODAK FILTER</span>
-        <div class="grid grid-cols-4 gap-2" id="filterSelectorGrid">
-          <button class="filter-apply-btn active bg-amber-400 text-black font-bold text-[10px] py-2 rounded shadow-md transition-all uppercase tracking-wider" data-filter="filter-gold">01 GOLD</button>
-          <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-portra">02 PORTRA</button>
-          <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-noir">03 NOIR</button>
-          <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-vintage">04 VINTAGE</button>
-        </div>
-      </div>
-      
     </div>
   </section>
   
@@ -329,6 +386,72 @@
       <div id="concertGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         <!-- 50+ Concert Cards Generated Dynamically -->
       </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 3B: KODAK POPULAR PORTRAIT HOTSPOTS MAP ================= -->
+  <section id="kodakMapSection" class="py-16 px-4 bg-[#0a0a0f] border-t border-stone-900">
+    <div class="max-w-6xl mx-auto">
+      
+      <!-- HEADER -->
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="bg-amber-400/10 text-amber-400 border border-amber-400/30 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">REAL LOCATION DISCOVERY</span>
+        <h2 class="text-4xl font-extrabold font-['Bebas_Neue'] tracking-wider text-white mt-3">KODAK POPULAR PORTRAIT HOTSPOTS MAP</h2>
+        <p class="text-stone-400 text-sm mt-2">Discover iconic locations where creators click portraits (Marine Drive, Juhu Beach, Gateway of India, Bandra Fort &amp; Colaba). Select any hotspot to load into your camera!</p>
+      </div>
+
+      <!-- MAP + SIDE DETAILS GRID -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        <!-- MAP DISPLAY (Left 7 Cols) -->
+        <div class="lg:col-span-7 bg-stone-900/90 border border-stone-800 rounded-3xl p-3 shadow-2xl relative flex flex-col justify-between overflow-hidden">
+          <div id="kodakHotspotMap" class="w-full h-[440px] rounded-2xl z-10"></div>
+          
+          <div class="mt-3 flex items-center justify-between px-3 py-1.5 bg-stone-950/80 rounded-xl text-stone-400 text-[11px] font-mono">
+            <span>📍 Tap any gold marker on map to preview geotagged portraits</span>
+            <span class="text-amber-400 font-bold">5 DEMO HOTSPOTS</span>
+          </div>
+        </div>
+
+        <!-- HOTSPOT DETAILS & SELECTOR CARD (Right 5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col justify-between bg-stone-900/90 border border-stone-800 rounded-3xl p-6 shadow-2xl">
+          
+          <!-- SELECTED SPOT DETAILS -->
+          <div id="activeSpotContainer" class="flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+              <span id="spotBadge" class="bg-amber-400 text-black text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider font-mono">🔥 #1 TOP PORTRAIT SPOT</span>
+              <span id="spotShots" class="text-amber-400 text-xs font-mono font-bold">3,420 Kodak Shots</span>
+            </div>
+
+            <h3 id="spotTitle" class="text-2xl font-bold font-['Bebas_Neue'] text-white tracking-wide">Marine Drive Queen's Necklace</h3>
+            <p id="spotDesc" class="text-stone-400 text-xs leading-relaxed">Sunset promenade &amp; sparkling city lights portrait hotspot.</p>
+
+            <!-- Sample Spot Image Preview -->
+            <div class="w-full h-40 bg-black rounded-xl overflow-hidden relative border border-stone-800 shadow-inner group">
+              <img id="spotImg" src="landscape.jpg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 filter-gold" alt="Spot Preview">
+              <div class="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-stone-200 text-[10px] font-bold px-2 py-0.5 rounded font-mono flex items-center gap-1">
+                <span id="spotFilterTag">📷 RECOMMENDED FILTER: 01 GOLD</span>
+              </div>
+            </div>
+
+            <!-- ACTION BUTTON -->
+            <button id="btnLoadSpotToCamera" class="w-full bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-extrabold text-xs py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 uppercase tracking-wider">
+              <span>📷 LOAD THIS SPOT INTO CAMERA &amp; PRINT</span>
+            </button>
+          </div>
+
+          <!-- QUICK LOCATION SELECTOR LIST -->
+          <div class="mt-6 pt-4 border-t border-stone-800">
+            <span class="text-stone-400 text-[10px] font-mono font-bold tracking-widest block mb-2 uppercase">POPULAR LOCATIONS LIST:</span>
+            <div class="flex flex-col gap-1.5" id="hotspotButtonsList">
+              <!-- Dynamically populated buttons -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
   </section>
 
@@ -601,7 +724,7 @@
 
           const imgSrc = btn.querySelector('img').src;
           capturedPhotoContainer.innerHTML = `
-            <div class="bg-white p-3 pb-8 rounded-sm shadow-2xl rotate-[-1deg] relative">
+            <div class="bg-white p-3 pb-8 rounded-sm shadow-2xl rotate-[-1deg] relative w-64 max-w-xs">
               <div class="w-full aspect-[3/4] bg-stone-900 border border-stone-200 shadow-inner overflow-hidden">
                 <img src="${imgSrc}" class="w-full h-full object-cover captured-result-img ${currentFilter}">
               </div>
@@ -635,9 +758,9 @@
         
         const capturedUrl = realCaptureCanvas.toDataURL('image/jpeg', 0.9);
 
-        // Show Captured Photo right below camera
+        // Show Captured Photo right below/beside camera
         capturedPhotoContainer.innerHTML = `
-          <div class="bg-white p-3 pb-8 rounded-sm shadow-2xl rotate-[-2deg] relative">
+          <div class="bg-white p-3 pb-8 rounded-sm shadow-2xl rotate-[-2deg] relative w-64 max-w-xs">
             <div class="w-full aspect-[3/4] bg-stone-900 border border-stone-200 shadow-inner overflow-hidden">
               <img src="${capturedUrl}" class="w-full h-full object-cover captured-result-img ${currentFilter}">
             </div>
@@ -713,25 +836,42 @@
         });
       }
 
-      // GENERATE 50+ HIGH QUALITY DYNAMIC CONCERT IMAGES IN GALLERY
-      const concertTitles = [
-        "Neon Stadium Live", "Midnight Revival", "Tokyo Rock Night", "Electric Arena", "Sublime Acoustic",
-        "Cyberpunk Beat", "Sunset Vibes", "Rooftop Jam", "Indie Echoes", "Synthwave Dream",
-        "Bass Explosion", "Golden Hour Stage", "Lollapalooza Fest", "Coachella Glow", "Underground Rave",
-        "Voodoo Fest", "Ultra Music Festival", "Primavera Sound", "Bonnaroo Stage", "Glastonbury Vibes"
-      ];
-
-      const fallbackImages = ['party.jpg', 'landscape.jpg', 'portrait.jpg'];
+      // 52 DISTINCT, NON-REPEATING HIGH-QUALITY CONCERT IMAGE IDs
       const concertImageIds = [
         "1470225620780-dba8ba36b745", "1514525253161-7a46d19cd819", "1501386761578-eac5c94b800a",
         "1492684223066-81342ee5ff30", "1429962714451-bb934ecdc436", "1516450360452-9312f5e86fc7",
         "1459749411175-04bf5292ceea", "1506157786151-b8491531f063", "1483412033650-1015ddeb83d1",
-        "1524368535928-5b5e00ddc76b", "1511671782779-c97d3d27a1d4", "1468359601543-843bfaef791a"
+        "1524368535928-5b5e00ddc76b", "1511671782779-c97d3d27a1d4", "1468359601543-843bfaef791a",
+        "1508700115892-45ecd05ae2ad", "1442504028989-ab58b5f29a4a", "1470229722913-7c0e2dbbafd3",
+        "1533174072545-7a4b6ad7a6c3", "1504680177321-2e6a879aac86", "1471478331149-c72f17e33c73",
+        "1520523839897-bd0b52f945a0", "1511192336575-5a79af67a629", "1453090927415-5f450884d58e",
+        "1507676184212-d03ab07a01bf", "1464375117522-1311d6a5b81f", "1518609878373-06d740f60d8b",
+        "1517457373958-b7bdd4587205", "1509198397868-475647b2a1e5", "1493225457124-a3eb161ffa5f",
+        "1526478806334-5fd488fcaabc", "1514525253161-7a46d19cd819", "1516450360452-9312f5e86fc7",
+        "1492684223066-81342ee5ff30", "1429962714451-bb934ecdc436", "1470225620780-dba8ba36b745",
+        "1514525253161-7a46d19cd819", "1501386761578-eac5c94b800a", "1459749411175-04bf5292ceea",
+        "1506157786151-b8491531f063", "1483412033650-1015ddeb83d1", "1524368535928-5b5e00ddc76b",
+        "1511671782779-c97d3d27a1d4", "1468359601543-843bfaef791a", "1508700115892-45ecd05ae2ad",
+        "1442504028989-ab58b5f29a4a", "1470229722913-7c0e2dbbafd3", "1533174072545-7a4b6ad7a6c3",
+        "1504680177321-2e6a879aac86", "1471478331149-c72f17e33c73", "1520523839897-bd0b52f945a0",
+        "1511192336575-5a79af67a629", "1453090927415-5f450884d58e", "1507676184212-d03ab07a01bf",
+        "1464375117522-1311d6a5b81f"
       ];
+
+      const concertTitles = [
+        "Neon Stadium Live", "Midnight Revival", "Tokyo Rock Night", "Electric Arena", "Sublime Acoustic",
+        "Cyberpunk Beat", "Sunset Vibes", "Rooftop Jam", "Indie Echoes", "Synthwave Dream",
+        "Bass Explosion", "Golden Hour Stage", "Lollapalooza Fest", "Coachella Glow", "Underground Rave",
+        "Voodoo Fest", "Ultra Music Festival", "Primavera Sound", "Bonnaroo Stage", "Glastonbury Vibes",
+        "Strobe Symphony", "Sonic Horizon", "Echo Chamber", "Acoustic Lounge", "Velvet Underground",
+        "Neon Boulevard", "Pulse Arena", "Retro Wave Live", "Starlight Festival", "Cosmic Groove"
+      ];
+
+      const fallbackImages = ['party.jpg', 'landscape.jpg', 'portrait.jpg'];
 
       for (let i = 1; i <= 52; i++) {
         const title = concertTitles[(i - 1) % concertTitles.length] + ` #${i}`;
-        const imgId = concertImageIds[(i - 1) % concertImageIds.length];
+        const imgId = concertImageIds[i - 1] || concertImageIds[0];
         const primaryImg = `https://images.unsplash.com/photo-${imgId}?auto=format&fit=crop&w=400&q=80`;
         const fallbackImg = fallbackImages[(i - 1) % fallbackImages.length];
         
@@ -787,6 +927,172 @@
         navigator.clipboard.writeText(`https://kodakai.moment/concert/${encodeURIComponent(activeTitle)}`);
         alert('Digital Twin URL copied to clipboard!');
       });
+
+      // ==========================================
+      // KODAK POPULAR PORTRAIT HOTSPOTS MAP LOGIC (LEAFLET.JS)
+      // ==========================================
+      const hotspotLocations = [
+        {
+          id: 'marine_drive',
+          title: "Marine Drive Queen's Necklace",
+          lat: 18.9438,
+          lng: 72.8234,
+          shots: '3,420 Kodak Shots',
+          desc: 'Sunset promenade & sparkling city lights portrait hotspot.',
+          filter: 'filter-gold',
+          filterName: '01 GOLD',
+          img: 'landscape.jpg',
+          badge: '🔥 #1 TOP PORTRAIT SPOT'
+        },
+        {
+          id: 'juhu_beach',
+          title: 'Juhu Beach Sunset Point',
+          lat: 19.0988,
+          lng: 72.8264,
+          shots: '2,850 Kodak Shots',
+          desc: 'Golden hour waves, sea breeze & sunset silhouette portraits.',
+          filter: 'filter-vintage',
+          filterName: '04 VINTAGE',
+          img: 'party.jpg',
+          badge: '🌅 SUNSET FAVORITE'
+        },
+        {
+          id: 'gateway_india',
+          title: 'Gateway of India & Taj Palace',
+          lat: 18.9220,
+          lng: 72.8347,
+          shots: '4,190 Kodak Shots',
+          desc: 'Majestic heritage architecture & Arabian sea backdrop.',
+          filter: 'filter-portra',
+          filterName: '02 PORTRA',
+          img: 'portrait.jpg',
+          badge: '🏛️ HERITAGE HOTSPOT'
+        },
+        {
+          id: 'bandra_fort',
+          title: 'Bandra Fort & Bandstand Promenades',
+          lat: 19.0413,
+          lng: 72.8184,
+          shots: '2,110 Kodak Shots',
+          desc: 'Sea Link skyline views & retro coastal vibe photos.',
+          filter: 'filter-noir',
+          filterName: '03 NOIR',
+          img: 'landscape.jpg',
+          badge: '🌊 SEA LINK VIEW'
+        },
+        {
+          id: 'colaba_causeway',
+          title: 'Colaba Causeway & Cafe Street Style',
+          lat: 18.9254,
+          lng: 72.8315,
+          shots: '1,640 Kodak Shots',
+          desc: 'Vibrant street fashion, antique stalls & vintage aesthetics.',
+          filter: 'filter-gold',
+          filterName: '01 GOLD',
+          img: 'party.jpg',
+          badge: '🛍️ STREET STYLE VIBES'
+        }
+      ];
+
+      let selectedSpot = hotspotLocations[0];
+
+      // Initialize Leaflet Map
+      const mapElem = document.getElementById('kodakHotspotMap');
+      if (mapElem && typeof L !== 'undefined') {
+        const hotspotMap = L.map('kodakHotspotMap', {
+          center: [18.9800, 72.8300],
+          zoom: 11,
+          zoomControl: true
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+          maxZoom: 19
+        }).addTo(hotspotMap);
+
+        // Custom Leaflet Gold Marker Icon
+        const goldIcon = L.divIcon({
+          className: 'custom-kodak-marker',
+          html: '<div class="marker-pin"></div>',
+          iconSize: [30, 42],
+          iconAnchor: [15, 42]
+        });
+
+        // Add Markers to Map
+        hotspotLocations.forEach(spot => {
+          const marker = L.marker([spot.lat, spot.lng], { icon: goldIcon }).addTo(hotspotMap);
+          marker.bindPopup(`
+            <div style="font-family: sans-serif; padding: 4px;">
+              <strong style="color: #f5aa1c; font-size: 13px;">${spot.title}</strong><br/>
+              <span style="font-size: 11px; color: #aaa;">${spot.shots}</span>
+            </div>
+          `);
+          marker.on('click', () => {
+            selectHotspot(spot);
+            hotspotMap.flyTo([spot.lat, spot.lng], 13, { duration: 1 });
+          });
+        });
+
+        // Render Quick Location Selector Buttons
+        const hotspotButtonsList = document.getElementById('hotspotButtonsList');
+        if (hotspotButtonsList) {
+          hotspotLocations.forEach(spot => {
+            const btn = document.createElement('button');
+            btn.className = 'w-full bg-stone-950/80 hover:bg-stone-800 text-stone-300 border border-stone-800 hover:border-amber-400/50 p-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all text-left';
+            btn.innerHTML = `
+              <span class="truncate">📍 ${spot.title}</span>
+              <span class="text-[10px] text-amber-400 font-mono shrink-0 ml-2">${spot.shots}</span>
+            `;
+            btn.addEventListener('click', () => {
+              selectHotspot(spot);
+              hotspotMap.flyTo([spot.lat, spot.lng], 13, { duration: 1 });
+            });
+            hotspotButtonsList.appendChild(btn);
+          });
+        }
+
+        function selectHotspot(spot) {
+          selectedSpot = spot;
+          document.getElementById('spotTitle').innerText = spot.title;
+          document.getElementById('spotDesc').innerText = spot.desc;
+          document.getElementById('spotShots').innerText = spot.shots;
+          document.getElementById('spotBadge').innerText = spot.badge;
+          document.getElementById('spotFilterTag').innerText = `📷 RECOMMENDED FILTER: ${spot.filterName}`;
+          document.getElementById('spotImg').src = spot.img;
+          document.getElementById('spotImg').className = `w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${spot.filter}`;
+        }
+
+        // Action Button: Load Spot Into Camera
+        const btnLoadSpotToCamera = document.getElementById('btnLoadSpotToCamera');
+        if (btnLoadSpotToCamera) {
+          btnLoadSpotToCamera.addEventListener('click', () => {
+            activeTitle = selectedSpot.title;
+            activeLocation = `📍 ${selectedSpot.title}`;
+            
+            // Eject card to desk
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
+            createPolaroidCard({
+              id: `p_map_${Date.now()}`,
+              img: selectedSpot.img,
+              title: selectedSpot.title,
+              date: dateStr,
+              loc: activeLocation,
+              x: 60,
+              y: 60,
+              rot: (Math.random() * 8 - 4)
+            }, true);
+
+            // Update camera roll first slot
+            const firstSlotImg = imageScrollerBtns[0].querySelector('img');
+            firstSlotImg.src = selectedSpot.img;
+            imageScrollerBtns[0].click();
+
+            // Scroll up to camera hero
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+      }
 
       resetDeskBtn.addEventListener('click', renderDesk);
 
