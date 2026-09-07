@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kodak Live Camera — Concert Memory &amp; Instagram Twin OS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@400;600;700;800&family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0d0d11;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+    .font-handwriting {
+      font-family: 'Caveat', cursive;
+    }
+    .polaroid-card {
+      touch-action: none;
+    }
+    /* Dynamic Film Filter Presets */
+    .filter-gold { filter: sepia(0.25) contrast(1.15) saturate(1.25); }
+    .filter-portra { filter: contrast(1.05) saturate(1.15) brightness(1.05); }
+    .filter-noir { filter: grayscale(1) contrast(1.8) brightness(0.85); }
+    .filter-vintage { filter: hue-rotate(-20deg) saturate(1.6) contrast(1.2); }
+    
+    /* Concert Neon Glow & Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #111116;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #f5aa1c;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen relative bg-[#0d0d11] text-white">
+
+  <!-- TOP STICKY NAVIGATION BAR -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-[#121218]/90 backdrop-blur-md border-b border-stone-800/80 px-6 py-3 flex justify-between items-center shadow-2xl">
+    <div class="flex items-center gap-3">
+      <span class="bg-[#E30613] text-[#F5AA1C] font-bold px-2.5 py-1 rounded text-lg tracking-wider font-['Bebas_Neue'] shadow-md">KODAK</span>
+      <div class="flex flex-col">
+        <span class="text-white text-xs font-extrabold tracking-widest uppercase">Kodak Live Camera OS</span>
+        <span class="text-stone-400 text-[10px]">Concert Vault &bull; 50+ Live Scenes &bull; Instagram Twin</span>
+      </div>
+    </div>
+
+    <!-- QUICK NAV LINKS -->
+    <div class="hidden md:flex items-center gap-6 text-xs font-bold text-stone-300">
+      <a href="#cameraHero" class="hover:text-[#F5AA1C] transition-colors">📹 LIVE CAMERA</a>
+      <a href="#concertGallery" class="hover:text-[#F5AA1C] transition-colors">🎵 50+ CONCERT VAULT</a>
+      <a href="#vipBadgeSection" class="hover:text-[#F5AA1C] transition-colors">🎫 VIP PASS BADGE</a>
+      <a href="#instagramShare" class="hover:text-[#F5AA1C] transition-colors">📱 INSTAGRAM TWIN &amp; QR</a>
+    </div>
+
+    <!-- VIP BADGE UNLOCK COUNTER -->
+    <div class="flex items-center gap-3">
+      <div id="badgeCounter" class="bg-amber-400/10 border border-amber-400/30 px-3 py-1.5 rounded-full flex items-center gap-2">
+        <span class="text-amber-400 text-xs">🎫 VIP BADGE:</span>
+        <span id="badgeProgressText" class="text-amber-400 text-xs font-extrabold font-mono">0 / 5 SHOTS</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= SECTION 1: HERO & LIVE RETRO CAMERA ================= -->
+  <section id="cameraHero" class="pt-24 pb-12 px-4 min-h-[90vh] flex flex-col items-center justify-start relative overflow-hidden bg-[#0d0d11]">
+    
+    <!-- 1. INSTAX-STYLE PHYSICAL CAMERA -->
+    <div class="w-full max-w-2xl mx-auto flex flex-col items-center relative z-20 mt-4">
+      
+      <!-- Camera Body -->
+      <div id="instaxCameraBody" style="
+        width: 360px;
+        background: linear-gradient(180deg, #f5ece0 0%, #eee3d0 50%, #e8dcc8 100%);
+        border-radius: 40px;
+        padding: 24px 28px 32px;
+        box-shadow: 
+          0 20px 60px rgba(0,0,0,0.5),
+          0 0 0 3px #d4c8b4,
+          inset 0 2px 0 rgba(255,255,255,0.6),
+          inset 0 -2px 4px rgba(0,0,0,0.1);
+        position: relative;
+        user-select: none;
+      ">
+        
+        <!-- Camera Top Details -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          
+          <!-- Flash Unit -->
+          <div style="
+            width: 64px; height: 52px;
+            background: linear-gradient(145deg, #3a3a3a 0%, #222 100%);
+            border-radius: 8px;
+            border: 2px solid #555;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+          ">
+            <div style="
+              width: 40px; height: 30px;
+              background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+              border: 1px solid #666;
+              border-radius: 4px;
+            "></div>
+          </div>
+
+          <!-- Small Counter / Viewfinder -->
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="
+              width: 8px; height: 8px;
+              background: #2a2a2a;
+              border-radius: 50%;
+              border: 1.5px solid #555;
+            "></div>
+            <!-- Mini Viewfinder -->
+            <div style="
+              width: 28px; height: 22px;
+              background: linear-gradient(135deg, #1a3a5a, #0a1a2a);
+              border-radius: 6px;
+              border: 2.5px solid #bba88a;
+              box-shadow: inset 0 0 6px rgba(0,0,0,0.6);
+            "></div>
+          </div>
+        </div>
+
+        <!-- MAIN LENS AREA (Round — Live Camera Feed Goes Here) -->
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+          <div style="position: relative;">
+            <!-- Lens Ring (Outer — Pink/Rose Gold) -->
+            <div style="
+              width: 240px; height: 240px;
+              border-radius: 50%;
+              background: linear-gradient(145deg, #e8c8c0, #d4a8a0);
+              padding: 10px;
+              box-shadow: 0 8px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+            ">
+              <!-- Lens Inner (Dark) -->
+              <div id="cameraViewfinderArea" style="
+                width: 100%; height: 100%;
+                border-radius: 50%;
+                background: #1a1f2e;
+                overflow: hidden;
+                position: relative;
+                cursor: pointer;
+                border: 3px solid #333;
+                box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+              ">
+                <!-- Permission / Offline State -->
+                <div id="cameraOfflineState" style="
+                  position: absolute; inset: 0;
+                  display: flex; flex-direction: column;
+                  align-items: center; justify-content: center;
+                  z-index: 20; background: #1a1f2e;
+                  border-radius: 50%;
+                ">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8a9ab0" stroke-width="1.5" style="margin-bottom: 8px;">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="11.73"></line>
+                  </svg>
+                  <span style="color: #8a9ab0; font-size: 11px; font-weight: 600; letter-spacing: 0.1em;">Retry Camera</span>
+                </div>
+
+                <!-- Real Device Video Feed -->
+                <video id="liveCameraFeed" autoplay playsinline muted class="hidden" style="
+                  width: 100%; height: 100%;
+                  object-fit: cover;
+                  transform: scaleX(-1);
+                  position: relative; z-index: 10;
+                  border-radius: 50%;
+                "></video>
+                
+                <!-- Flash Effect -->
+                <div id="cameraFlashOverlay" style="
+                  position: absolute; inset: 0;
+                  background: white; z-index: 50;
+                  opacity: 0; pointer-events: none;
+                  transition: opacity 0.1s;
+                  border-radius: 50%;
+                "></div>
+
+                <!-- REC indicator -->
+                <div id="cameraRecIndicator" style="
+                  display: none;
+                  position: absolute; top: 12px; left: 12px;
+                  z-index: 30; 
+                  display: flex; align-items: center; gap: 4px;
+                ">
+                  <div style="width: 6px; height: 6px; background: #ff3333; border-radius: 50%; animation: pulse 1.5s infinite;"></div>
+                  <span style="color: rgba(255,255,255,0.7); font-size: 8px; font-family: monospace; font-weight: bold;">REC</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shutter Button (Physical — Below Lens, Centered) -->
+        <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+          <!-- Small decorative button -->
+          <div style="
+            width: 32px; height: 32px;
+            background: linear-gradient(180deg, #c4a890, #a88870);
+            border-radius: 50%;
+            border: 2px solid #b89878;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+          "></div>
+          
+          <!-- Main Shutter -->
+          <button id="realShutterBtn" style="
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #c4a890, #a88870);
+            border: 3px solid #b89878;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex; align-items: center; justify-content: center;
+            outline: none;
+          " title="Capture Photo"
+            onmousedown="this.style.transform='scale(0.92)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3), inset 0 2px 4px rgba(0,0,0,0.2)';"
+            onmouseup="this.style.transform='scale(1)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.4)';"
+          >
+            <div style="
+              width: 38px; height: 38px;
+              border-radius: 50%;
+              background: linear-gradient(180deg, #b0907a, #967060);
+              border: 1.5px solid #a08068;
+            "></div>
+          </button>
+        </div>
+
+        <!-- Camera Brand Label -->
+        <div style="text-align: center; margin-top: 12px;">
+          <span style="
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            color: #a09080;
+          ">KODAK INSTAX · AI MOMENT</span>
+        </div>
+
+        <!-- Photo Ejection Slot -->
+        <div style="
+          margin-top: 12px;
+          width: 100%; height: 6px;
+          background: #222;
+          border-radius: 3px;
+          box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        "></div>
+      </div>
+      
+      <!-- 2. CAPTURED PHOTOGRAPH (Emerged from Camera) -->
+      <div id="capturedPhotoContainer" class="mt-8 transition-all duration-700 transform translate-y-[-20px] opacity-0 pointer-events-none w-full max-w-[300px] relative z-10">
+        <!-- The physical photo will appear here -->
+      </div>
+      
+      <!-- 3. 3 IMAGE SCROLLER -->
+      <div class="mt-12 w-full max-w-md bg-stone-900/80 border border-stone-800/80 p-4 rounded-2xl backdrop-blur-sm">
+        <span class="text-stone-400 text-[10px] font-bold font-mono tracking-widest block mb-3 text-center uppercase">CAMERA ROLL (3 PHOTOS)</span>
+        <div class="flex justify-center gap-3" id="imageScrollerGrid">
+          <button class="image-scroller-btn active w-24 h-24 rounded-lg overflow-hidden border-2 border-amber-400 transition-all hover:opacity-80" data-index="0">
+            <img src="landscape.jpg" alt="Photo 01" class="w-full h-full object-cover">
+          </button>
+          <button class="image-scroller-btn w-24 h-24 rounded-lg overflow-hidden border-2 border-transparent transition-all hover:border-stone-500 opacity-60 hover:opacity-100" data-index="1">
+            <img src="portrait.jpg" alt="Photo 02" class="w-full h-full object-cover">
+          </button>
+          <button class="image-scroller-btn w-24 h-24 rounded-lg overflow-hidden border-2 border-transparent transition-all hover:border-stone-500 opacity-60 hover:opacity-100" data-index="2">
+            <img src="party.jpg" alt="Photo 03" class="w-full h-full object-cover">
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. 4 FILTERS -->
+      <div class="mt-6 w-full max-w-md bg-stone-900/80 border border-stone-800/80 p-4 rounded-2xl backdrop-blur-sm mb-12">
+        <span class="text-stone-400 text-[10px] font-bold font-mono tracking-widest block mb-3 text-center uppercase">APPLY KODAK FILTER</span>
+        <div class="grid grid-cols-4 gap-2" id="filterSelectorGrid">
+          <button class="filter-apply-btn active bg-amber-400 text-black font-bold text-[10px] py-2 rounded shadow-md transition-all uppercase tracking-wider" data-filter="filter-gold">01 GOLD</button>
+          <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-portra">02 PORTRA</button>
+          <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-noir">03 NOIR</button>
+          <button class="filter-apply-btn bg-stone-800 text-stone-300 hover:text-white font-bold text-[10px] py-2 rounded transition-all uppercase tracking-wider" data-filter="filter-vintage">04 VINTAGE</button>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+  
+  <!-- Canvas for extracting frames (hidden) -->
+  <canvas id="realCaptureCanvas" class="hidden"></canvas>
+
+  <!-- ================= SECTION 2: EJECTED DESK POLAROIDS & DIGITAL TWIN ================= -->
+  <section class="py-12 px-4 bg-stone-950 border-t border-stone-900 relative">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+          <span class="text-amber-400 font-mono text-xs font-bold tracking-widest uppercase">PHYSICAL MEMORY DESK</span>
+          <h2 class="text-3xl font-extrabold font-['Bebas_Neue'] text-white">DRAGGABLE POLAROIDS &amp; DIGITAL TWIN QR</h2>
+        </div>
+        <button id="resetDeskBtn" class="bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold px-4 py-2 rounded-lg border border-stone-700 flex items-center gap-2 transition-all">
+          🔄 Reset Polaroids
+        </button>
+      </div>
+
+      <!-- DESK CANVAS CONTAINER -->
+      <div id="polaroidDesk" class="w-full h-[480px] bg-stone-900/60 border border-stone-800/80 rounded-3xl relative overflow-hidden shadow-inner flex items-center justify-center">
+        <!-- Draggable Polaroids Injected Dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 3: 50+ CONCERT IMAGES GALLERY ================= -->
+  <section id="concertGallery" class="py-16 px-4 bg-[#0d0d11] border-t border-stone-900">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="bg-red-600/20 text-red-400 border border-red-500/30 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">LIVE CONCERT ARCHIVE</span>
+        <h2 class="text-4xl font-extrabold font-['Bebas_Neue'] tracking-wider text-white mt-3">50+ CONCERT MEMORIES VAULT</h2>
+        <p class="text-stone-400 text-sm mt-2">Select any concert scene below to load into your Kodak Camera viewfinder, apply Kodak filters, and print instant memories.</p>
+      </div>
+
+      <!-- 50+ CONCERT IMAGES GRID -->
+      <div id="concertGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <!-- 50+ Concert Cards Generated Dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 4: CONCERT VIP BADGE UNLOCK ================= -->
+  <section id="vipBadgeSection" class="py-16 px-4 bg-stone-950 border-t border-stone-900 text-center">
+    <div class="max-w-4xl mx-auto flex flex-col items-center">
+      <span class="text-amber-400 text-xs font-bold font-mono uppercase tracking-widest">CONCERT UNLOCK REWARD</span>
+      <h2 class="text-4xl font-extrabold font-['Bebas_Neue'] text-white mt-2">EARN THE KODAK CONCERT VIP BACKSTAGE BADGE</h2>
+      <p class="text-stone-400 text-sm mt-2 max-w-xl">Take 5 photos using the camera to automatically unlock your authentic Kodak All-Access Backstage VIP Badge!</p>
+
+      <div class="mt-8 relative group">
+        <div class="w-72 h-72 rounded-2xl overflow-hidden border-2 border-amber-400/40 shadow-[0_0_30px_rgba(245,170,44,0.3)] bg-stone-900 p-2">
+          <img src="concert_badge.jpg" id="vipBadgeImg" alt="VIP Badge" class="w-full h-full object-cover rounded-xl grayscale opacity-50 transition-all duration-500" />
+        </div>
+        <div id="badgeOverlayStatus" class="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center">
+          <span class="text-3xl mb-2">🔒</span>
+          <span class="text-amber-400 font-extrabold text-lg font-['Bebas_Neue']">LOCKED BADGE</span>
+          <span id="badgeLockDesc" class="text-stone-300 text-xs mt-1">Shoot 5 photos with shutter to unlock VIP Pass!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 5: INSTAGRAM SHARE & DIGITAL TWIN MODAL ================= -->
+  <section id="instagramShare" class="py-16 px-4 bg-[#0d0d11] border-t border-stone-900">
+    <div class="max-w-4xl mx-auto bg-gradient-to-r from-purple-900/30 via-pink-900/30 to-amber-900/30 border border-pink-500/30 rounded-3xl p-8 backdrop-blur-xl flex flex-col md:flex-row items-center gap-8 shadow-2xl">
+      
+      <div class="w-36 h-36 bg-white p-3 rounded-2xl flex flex-col items-center justify-center shadow-2xl shrink-0">
+        <img id="shareQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://kodakai.moment/concert/vip-2026" alt="QR" class="w-28 h-28" />
+        <span class="text-[9px] font-bold text-stone-900 mt-1 font-mono">SCAN DIGITAL TWIN</span>
+      </div>
+
+      <div class="flex flex-col gap-3 text-center md:text-left">
+        <div class="inline-flex items-center gap-2 text-pink-400 text-xs font-bold">
+          <span>📸 INSTAGRAM &amp; SOCIAL SYNC</span>
+        </div>
+        <h3 class="text-3xl font-extrabold font-['Bebas_Neue'] text-white">SHARE CONCERT MEMORIES TO INSTAGRAM</h3>
+        <p class="text-stone-300 text-xs leading-relaxed">
+          Every photo shot with Kodak Live Camera contains embedded GPS location metadata, concert timestamps, and a Cloud Digital Twin link ready to publish to Instagram Stories or Posts.
+        </p>
+
+        <div class="flex flex-wrap gap-3 mt-2 justify-center md:justify-start">
+          <button id="btnShareInsta" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2 transition-all">
+            <span>📷 Share on Instagram</span>
+          </button>
+          <button id="btnCopyLink" class="bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs px-5 py-2.5 rounded-full border border-stone-700 flex items-center gap-2 transition-all">
+            <span>🔗 Copy Digital Twin URL</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-8 px-4 bg-black border-t border-stone-900 text-center text-stone-500 text-xs">
+    <p>Kodak AI Moment &bull; Concert Live Camera &amp; Digital Twin OS &bull; 2026</p>
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const SHUTTER_SOUND_URL = 'https://www.bubbbly.com/assets/retro-camera/polaroid-camera.mp3';
+      const shutterAudio = new Audio(SHUTTER_SOUND_URL);
+
+      // DOM Elements
+      const liveCameraFeed = document.getElementById('liveCameraFeed');
+      const cameraOfflineState = document.getElementById('cameraOfflineState');
+      const cameraViewfinderArea = document.getElementById('cameraViewfinderArea');
+      const realShutterBtn = document.getElementById('realShutterBtn');
+      const cameraFlashOverlay = document.getElementById('cameraFlashOverlay');
+      const realCaptureCanvas = document.getElementById('realCaptureCanvas');
+      const capturedPhotoContainer = document.getElementById('capturedPhotoContainer');
+      const cameraRecIndicator = document.getElementById('cameraRecIndicator');
+      
+      const imageScrollerBtns = document.querySelectorAll('.image-scroller-btn');
+      const filterApplyBtns = document.querySelectorAll('.filter-apply-btn');
+
+      const polaroidDesk = document.getElementById('polaroidDesk');
+      const resetDeskBtn = document.getElementById('resetDeskBtn');
+      const concertGrid = document.getElementById('concertGrid');
+      const badgeProgressText = document.getElementById('badgeProgressText');
+      const vipBadgeImg = document.getElementById('vipBadgeImg');
+      const badgeOverlayStatus = document.getElementById('badgeOverlayStatus');
+      const badgeLockDesc = document.getElementById('badgeLockDesc');
+      const btnShareInsta = document.getElementById('btnShareInsta');
+      const btnCopyLink = document.getElementById('btnCopyLink');
+      const shareQrImg = document.getElementById('shareQrImg');
+
+      let currentFilter = 'filter-gold';
+      let isWebcamActive = false;
+      let webcamStream = null;
+      let photoCount = 0;
+      let topZIndex = 100;
+      let activeLocation = '📍 User Location';
+      let activeTitle = 'Live Camera Shot';
+
+      // INITIAL 3 PRESET POLAROIDS
+      const initialPolaroids = [
+        { id: 'p1', img: 'landscape.jpg', title: 'Mountain Sunrise', date: '2026/09/07', loc: '📍 Swiss Alps', x: 40, y: 40, rot: -5 },
+        { id: 'p2', img: 'portrait.jpg', title: 'Friends Backstage', date: '2026/09/06', loc: '📍 Venice Beach', x: 280, y: 60, rot: 6 },
+        { id: 'p3', img: 'party.jpg', title: 'Tokyo Neon Stage', date: '2026/08/28', loc: '📍 Shinjuku, Tokyo', x: 520, y: 40, rot: -4 }
+      ];
+
+      function renderDesk() {
+        polaroidDesk.innerHTML = '';
+        initialPolaroids.forEach(p => createPolaroidCard(p));
+      }
+
+      function createPolaroidCard(data, isNew = false) {
+        const card = document.createElement('div');
+        card.className = `polaroid-card absolute w-[220px] bg-white shadow-2xl p-3 pb-8 rounded-lg flex flex-col items-center cursor-grab active:cursor-grabbing hover:scale-105 transition-transform duration-150`;
+        card.style.left = `${data.x}px`;
+        card.style.top = `${data.y}px`;
+        card.style.transform = `rotate(${data.rot}deg)`;
+        card.style.zIndex = topZIndex++;
+
+        card.innerHTML = `
+          <div class="w-full h-[170px] bg-black overflow-hidden relative border border-gray-100 shadow-inner rounded-sm">
+            <img src="${data.img}" class="w-full h-full object-cover block pointer-events-none ${currentFilter}" alt="Polaroid" />
+            <div class="absolute inset-0 pointer-events-none opacity-10 bg-gradient-to-tr from-white/20 via-transparent to-black/20"></div>
+          </div>
+          <div class="mt-3 text-center w-full font-handwriting leading-tight z-10">
+            <div class="text-lg font-bold text-stone-900 outline-none hover:bg-stone-100 px-1 rounded" contenteditable="true">${data.title}</div>
+            <div class="text-xs text-stone-500 font-sans mt-0.5">${data.loc} &bull; ${data.date}</div>
+          </div>
+        `;
+
+        polaroidDesk.appendChild(card);
+        makeDraggable(card);
+
+        if (isNew) {
+          card.style.left = '40px';
+          card.style.top = '300px';
+          card.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+          setTimeout(() => {
+            card.style.top = '40px';
+          }, 50);
+        }
+      }
+
+      // ==========================================
+      // REAL DEVICE CAMERA LOGIC & AUTO INIT
+      // ==========================================
+      async function initCamera() {
+        try {
+          webcamStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'user', width: { ideal: 1080 }, height: { ideal: 1440 } }, 
+            audio: false 
+          });
+          liveCameraFeed.srcObject = webcamStream;
+          liveCameraFeed.classList.remove('hidden');
+          liveCameraFeed.style.display = 'block';
+          cameraOfflineState.style.display = 'none';
+          cameraRecIndicator.style.display = 'flex';
+          isWebcamActive = true;
+        } catch (e) {
+          console.log('Webcam not directly accessible, initializing fallback live stream:', e);
+          startFallbackLiveStream();
+        }
+      }
+
+      // Simulated dynamic live camera feed if real webcam is blocked / unavailable
+      function startFallbackLiveStream() {
+        const simCanvas = document.createElement('canvas');
+        simCanvas.width = 400;
+        simCanvas.height = 400;
+        const sCtx = simCanvas.getContext('2d');
+        let frame = 0;
+
+        function drawSimFrame() {
+          frame++;
+          sCtx.fillStyle = '#0a0d14';
+          sCtx.fillRect(0, 0, 400, 400);
+
+          // Animated spotlight / stage lights
+          const x1 = 200 + Math.sin(frame * 0.05) * 120;
+          const y1 = 200 + Math.cos(frame * 0.03) * 100;
+          const grad1 = sCtx.createRadialGradient(x1, y1, 10, x1, y1, 180);
+          grad1.addColorStop(0, 'rgba(245, 170, 28, 0.8)');
+          grad1.addColorStop(0.5, 'rgba(227, 6, 19, 0.4)');
+          grad1.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          sCtx.fillStyle = grad1;
+          sCtx.beginPath(); sCtx.arc(x1, y1, 180, 0, Math.PI * 2); sCtx.fill();
+
+          const x2 = 200 + Math.cos(frame * 0.04) * 100;
+          const y2 = 200 + Math.sin(frame * 0.06) * 120;
+          const grad2 = sCtx.createRadialGradient(x2, y2, 10, x2, y2, 160);
+          grad2.addColorStop(0, 'rgba(168, 85, 247, 0.7)');
+          grad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          sCtx.fillStyle = grad2;
+          sCtx.beginPath(); sCtx.arc(x2, y2, 160, 0, Math.PI * 2); sCtx.fill();
+
+          // Stage silhouette / live prompt text
+          sCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+          sCtx.font = 'bold 16px sans-serif';
+          sCtx.textAlign = 'center';
+          sCtx.fillText('LIVE STAGE PREVIEW', 200, 190);
+          sCtx.fillStyle = 'rgba(245, 170, 28, 0.9)';
+          sCtx.font = '12px monospace';
+          sCtx.fillText('Click viewfinder to allow webcam', 200, 215);
+
+          requestAnimationFrame(drawSimFrame);
+        }
+        drawSimFrame();
+
+        try {
+          const simStream = simCanvas.captureStream(30);
+          liveCameraFeed.srcObject = simStream;
+          liveCameraFeed.classList.remove('hidden');
+          liveCameraFeed.style.display = 'block';
+          cameraOfflineState.style.display = 'none';
+          cameraRecIndicator.style.display = 'flex';
+          isWebcamActive = true;
+        } catch (err) {
+          console.log('Stream capture error:', err);
+        }
+      }
+
+      // Viewfinder click to request camera access
+      cameraViewfinderArea.addEventListener('click', async () => {
+        try {
+          webcamStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'user', width: { ideal: 1080 }, height: { ideal: 1440 } }, 
+            audio: false 
+          });
+          liveCameraFeed.srcObject = webcamStream;
+          liveCameraFeed.classList.remove('hidden');
+          liveCameraFeed.style.display = 'block';
+          cameraOfflineState.style.display = 'none';
+          cameraRecIndicator.style.display = 'flex';
+          isWebcamActive = true;
+        } catch (e) {
+          alert('Webcam access was denied or device not found. Operating in Live Stage Simulator mode.');
+        }
+      });
+
+      // Filter Logic (4 Filters)
+      filterApplyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterApplyBtns.forEach(b => {
+            b.classList.remove('active', 'bg-amber-400', 'text-black');
+            b.classList.add('bg-stone-800', 'text-stone-300');
+          });
+          btn.classList.add('active', 'bg-amber-400', 'text-black');
+          btn.classList.remove('bg-stone-800', 'text-stone-300');
+
+          currentFilter = btn.getAttribute('data-filter');
+          
+          liveCameraFeed.classList.remove('filter-gold', 'filter-portra', 'filter-noir', 'filter-vintage');
+          liveCameraFeed.classList.add(currentFilter);
+          
+          document.querySelectorAll('.polaroid-card img, .captured-result-img').forEach(img => {
+            img.classList.remove('filter-gold', 'filter-portra', 'filter-noir', 'filter-vintage');
+            img.classList.add(currentFilter);
+          });
+        });
+      });
+
+      // 3 Image Scroller Selection
+      imageScrollerBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          imageScrollerBtns.forEach(b => {
+            b.classList.remove('active', 'border-amber-400');
+            b.classList.add('border-transparent', 'opacity-60');
+          });
+          btn.classList.add('active', 'border-amber-400');
+          btn.classList.remove('border-transparent', 'opacity-60');
+
+          const imgSrc = btn.querySelector('img').src;
+          capturedPhotoContainer.innerHTML = `
+            <div class="bg-white p-3 pb-8 rounded-sm shadow-2xl rotate-[-1deg] relative">
+              <div class="w-full aspect-[3/4] bg-stone-900 border border-stone-200 shadow-inner overflow-hidden">
+                <img src="${imgSrc}" class="w-full h-full object-cover captured-result-img ${currentFilter}">
+              </div>
+              <div class="absolute bottom-2 left-0 w-full text-center font-handwriting text-stone-800 text-lg">Camera Roll Selected</div>
+            </div>
+          `;
+          capturedPhotoContainer.style.opacity = '1';
+          capturedPhotoContainer.style.transform = 'translateY(0)';
+        });
+      });
+
+      // Shutter Capture Logic
+      realShutterBtn.addEventListener('click', () => {
+        shutterAudio.currentTime = 0;
+        shutterAudio.play().catch(e => console.log('Audio playback info:', e));
+
+        cameraFlashOverlay.style.opacity = '1';
+        setTimeout(() => cameraFlashOverlay.style.opacity = '0', 150);
+
+        const videoWidth = liveCameraFeed.videoWidth || 400;
+        const videoHeight = liveCameraFeed.videoHeight || 400;
+        realCaptureCanvas.width = videoWidth;
+        realCaptureCanvas.height = videoHeight;
+        
+        const ctx = realCaptureCanvas.getContext('2d');
+        if (webcamStream) {
+          ctx.translate(videoWidth, 0);
+          ctx.scale(-1, 1);
+        }
+        ctx.drawImage(liveCameraFeed, 0, 0, videoWidth, videoHeight);
+        
+        const capturedUrl = realCaptureCanvas.toDataURL('image/jpeg', 0.9);
+
+        // Show Captured Photo right below camera
+        capturedPhotoContainer.innerHTML = `
+          <div class="bg-white p-3 pb-8 rounded-sm shadow-2xl rotate-[-2deg] relative">
+            <div class="w-full aspect-[3/4] bg-stone-900 border border-stone-200 shadow-inner overflow-hidden">
+              <img src="${capturedUrl}" class="w-full h-full object-cover captured-result-img ${currentFilter}">
+            </div>
+            <div class="absolute bottom-2 left-0 w-full text-center font-handwriting text-stone-800 text-lg">Just now</div>
+          </div>
+        `;
+        capturedPhotoContainer.style.opacity = '1';
+        capturedPhotoContainer.style.transform = 'translateY(0) scale(1.02)';
+        setTimeout(() => {
+          capturedPhotoContainer.style.transform = 'translateY(0) scale(1)';
+        }, 300);
+
+        // Update 3 Image Scroller first slot
+        const firstSlotImg = imageScrollerBtns[0].querySelector('img');
+        firstSlotImg.src = capturedUrl;
+        imageScrollerBtns[0].click();
+
+        // Send to Polaroid Desk
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
+        
+        createPolaroidCard({
+          id: `p_${Date.now()}`,
+          img: capturedUrl,
+          title: activeTitle,
+          date: dateStr,
+          loc: activeLocation,
+          x: 40 + ((photoCount % 5) * 20),
+          y: 40,
+          rot: (Math.random() * 8 - 4)
+        }, true);
+
+        // VIP Unlock logic
+        photoCount++;
+        badgeProgressText.innerText = `${Math.min(photoCount, 5)} / 5 SHOTS`;
+
+        if (photoCount >= 5) {
+          vipBadgeImg.classList.remove('grayscale', 'opacity-50');
+          badgeOverlayStatus.style.display = 'none';
+        }
+
+        shareQrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://kodakai.moment/shot/${Date.now()}`;
+      });
+
+      // Draggable Physics Logic
+      function makeDraggable(el) {
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        el.addEventListener('pointerdown', (e) => {
+          if (e.target.getAttribute('contenteditable') === 'true') return;
+          isDragging = true;
+          el.style.zIndex = topZIndex++;
+          startX = e.clientX;
+          startY = e.clientY;
+          initialLeft = parseFloat(el.style.left) || 0;
+          initialTop = parseFloat(el.style.top) || 0;
+          el.setPointerCapture(e.pointerId);
+        });
+
+        el.addEventListener('pointermove', (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          el.style.left = `${initialLeft + dx}px`;
+          el.style.top = `${initialTop + dy}px`;
+        });
+
+        el.addEventListener('pointerup', (e) => {
+          if (!isDragging) return;
+          isDragging = false;
+          el.releasePointerCapture(e.pointerId);
+        });
+      }
+
+      // GENERATE 50+ HIGH QUALITY DYNAMIC CONCERT IMAGES IN GALLERY
+      const concertTitles = [
+        "Neon Stadium Live", "Midnight Revival", "Tokyo Rock Night", "Electric Arena", "Sublime Acoustic",
+        "Cyberpunk Beat", "Sunset Vibes", "Rooftop Jam", "Indie Echoes", "Synthwave Dream",
+        "Bass Explosion", "Golden Hour Stage", "Lollapalooza Fest", "Coachella Glow", "Underground Rave",
+        "Voodoo Fest", "Ultra Music Festival", "Primavera Sound", "Bonnaroo Stage", "Glastonbury Vibes"
+      ];
+
+      const fallbackImages = ['party.jpg', 'landscape.jpg', 'portrait.jpg'];
+      const concertImageIds = [
+        "1470225620780-dba8ba36b745", "1514525253161-7a46d19cd819", "1501386761578-eac5c94b800a",
+        "1492684223066-81342ee5ff30", "1429962714451-bb934ecdc436", "1516450360452-9312f5e86fc7",
+        "1459749411175-04bf5292ceea", "1506157786151-b8491531f063", "1483412033650-1015ddeb83d1",
+        "1524368535928-5b5e00ddc76b", "1511671782779-c97d3d27a1d4", "1468359601543-843bfaef791a"
+      ];
+
+      for (let i = 1; i <= 52; i++) {
+        const title = concertTitles[(i - 1) % concertTitles.length] + ` #${i}`;
+        const imgId = concertImageIds[(i - 1) % concertImageIds.length];
+        const primaryImg = `https://images.unsplash.com/photo-${imgId}?auto=format&fit=crop&w=400&q=80`;
+        const fallbackImg = fallbackImages[(i - 1) % fallbackImages.length];
+        
+        const card = document.createElement('div');
+        card.className = 'bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-amber-400/50 transition-all cursor-pointer group p-2';
+        card.innerHTML = `
+          <div class="w-full h-28 bg-black rounded-lg overflow-hidden relative">
+            <img src="${primaryImg}" onerror="this.onerror=null; this.src='${fallbackImg}';" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 ${currentFilter}" alt="${title}" />
+            <span class="absolute top-1.5 left-1.5 bg-black/70 text-[#F5AA1C] text-[9px] font-bold px-1.5 py-0.5 rounded font-mono">CONCERT #${i}</span>
+          </div>
+          <div class="mt-2 flex justify-between items-center">
+            <span class="text-xs font-bold text-stone-200 truncate pr-1">${title}</span>
+            <span class="text-[10px] text-amber-400 font-bold hover:underline shrink-0">📷 LOAD</span>
+          </div>
+        `;
+
+        card.addEventListener('click', () => {
+          activeTitle = title;
+          activeLocation = `📍 Concert Arena Stage #${i}`;
+          
+          // Eject card to desk
+          const now = new Date();
+          const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
+          createPolaroidCard({
+            id: `p_c_${i}_${Date.now()}`,
+            img: primaryImg,
+            title: title,
+            date: dateStr,
+            loc: activeLocation,
+            x: 50 + ((i % 6) * 35),
+            y: 50,
+            rot: (Math.random() * 10 - 5)
+          }, true);
+
+          // Update image scroller
+          const firstSlotImg = imageScrollerBtns[0].querySelector('img');
+          firstSlotImg.src = primaryImg;
+          imageScrollerBtns[0].click();
+
+          // Scroll up to camera
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        concertGrid.appendChild(card);
+      }
+
+      // Instagram Share & Copy Link Handlers
+      btnShareInsta.addEventListener('click', () => {
+        alert(`Shared memory "${activeTitle}" to Instagram Story! Digital Twin linked.`);
+      });
+
+      btnCopyLink.addEventListener('click', () => {
+        navigator.clipboard.writeText(`https://kodakai.moment/concert/${encodeURIComponent(activeTitle)}`);
+        alert('Digital Twin URL copied to clipboard!');
+      });
+
+      resetDeskBtn.addEventListener('click', renderDesk);
+
+      // Auto start camera & render desk
+      initCamera();
+      renderDesk();
+    });
+  </script>
+</body>
+</html>
